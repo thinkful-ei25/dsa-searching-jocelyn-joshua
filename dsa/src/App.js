@@ -7,31 +7,51 @@ let dataSet2 = "89 30 25 32 72 70 51 42 25 24 53 55 78 50 13 40 48 32 26 2 14 33
 dataSet2 = dataSet2.split(' ').sort();
 
 class App extends Component {
+ constructor(props){
+   super(props);
+     this.state = {
+       searchTerm: null,
+       linearRes:null,
+       binaryRes:null, 
+       found: false
+     };
+   }
+ 
+
   search(e) {
     e.preventDefault();
-    console.log(this.linearSearch(this.input.value));
-    console.log(this.binarySearch(this.input.value, dataSet2)); 
+    this.linearSearch(this.input.value); 
+
+    this.binarySearch(this.input.value, dataSet2); 
   }
   linearSearch(val){
+    this.setState({
+    searchTerm: val
+    }); 
     for(let i = 0; i < dataSet.length; i++){
       if(dataSet[i] === val){
-        return ('I found ' + val + " after " + (i+1) + ' steps');
+        this.setState({
+        linearRes:i+1,
+        found:true 
+        });
+        return;
       }
-    }  return('I never found ' + val + ' even after ' + (dataSet.length) + ' attempts');
+
+    } return;  
+     
 
   }
 
   binarySearch(val, arr, start=0, end=arr.length, count=1){
-    
-    if (start > end) {
-      return ('I never found ' + val + ' even after a whole ' + arr.length + ' steps'); 
-    }
 
     const index = Math.floor((start + end)/2); 
     const item = arr[index]; 
 
     if(item === val){
-      return ('I found '+ val + ' in '+ count + ' steps' ); 
+      this.setState({
+        binaryRes: count
+      }); 
+      return; 
     }
     else if(item < val){
       return this.binarySearch(val, arr, index+1, end, count+1)
@@ -46,12 +66,25 @@ class App extends Component {
   render() {
     let submitButton = (<button type="submit">Submit</button>);
     let form = (<form onSubmit={e => this.search(e)}><input type="text" ref={(input) => (this.input = input)}></input>{submitButton}</form>);
+    let linearResults = (<p> Linear Search says 'I found {this.state.searchTerm} in {this.state.linearRes} steps'</p>);
+    let binaryResults =  (<p> Binary Search says 'I found {this.state.searchTerm} in {this.state.binaryRes} steps'</p>);
+    if(this.state.found){
     return (
       <div className="App">
-        search
+        Linear Search vs Binary Search 
+        {form}
+        {linearResults}
+        {binaryResults}
+      </div>
+    );
+  } else {
+    return (
+      <div className="App">
+        Linear Search vs Binary Search 
         {form}
       </div>
     );
+  }
   }
 }
 
